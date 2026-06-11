@@ -3,40 +3,49 @@
 @section('title', 'Registered Students')
 
 @push('styles')
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/students/students.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/students/id_registry.css') }}">
 @endpush
 
 @section('content')
-<div class="card">
-    <div id="container" class="card-header text-center">
-        <h4 class="mb-0">Registered Students</h4>
+<div class="id-page">
+    <div class="id-page-header">
+        <div class="id-page-intro">
+            <p class="id-eyebrow">ID Generation</p>
+            <h1 class="id-title">Registered Students</h1>
+            <p class="id-subtitle">Manage patron records and generate ID cards</p>
+        </div>
+
+        <div class="id-tabs" role="tablist" aria-label="Registry type">
+            <a href="{{ route('students.index') }}" class="id-tab active" role="tab" aria-selected="true">Students</a>
+            <a href="{{ route('employees.index') }}" class="id-tab" role="tab" aria-selected="false">Faculty</a>
+        </div>
     </div>
 
-    <div class="card-body">
-        <div class="mb-3">
-            <div class="d-flex mb-2" style="max-width: 350px;">
-                <form action="{{ route('students.index') }}" method="GET" class="d-flex w-100">
-                    <input type="text" name="search" class="form-control form-control-sm"
-                        placeholder="Search patrons..." value="{{ request('search') }}">
-                    <button type="submit" id="search" class="btn btn-primary btn-sm ms-2">Search</button>
-                </form>
-            </div>
+    <div class="id-toolbar">
+        <form action="{{ route('students.index') }}" method="GET" class="id-search-form">
+            <input type="text" name="search" class="id-search-input" placeholder="Search patrons by name, course, or QR code…" value="{{ request('search') }}">
+            <button type="submit" class="id-btn id-btn-search">Search</button>
+        </form>
 
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                @can('isAdmin')
-                    <a href="{{ route('students.create') }}" class="btn btn-add">+ Register Patron</a>
-                @endcan
-                <a href="{{ route('pending.index') }}" class="btn btn-warning">View Pending Registrations</a>
-            </div>
+        <div class="id-toolbar-actions">
+            @can('isAdmin')
+                <a href="{{ route('students.create') }}" class="id-btn id-btn-primary">+ Register Patron</a>
+            @endcan
+            <a href="{{ route('pending.index') }}" class="id-btn id-btn-secondary">Pending Registrations</a>
+        </div>
+    </div>
+
+    <div class="id-table-card">
+        <div class="id-table-meta">
+            <span>{{ $students->total() }} student{{ $students->total() === 1 ? '' : 's' }} registered</span>
         </div>
 
-        <div class="mb-3 text-center">
-            <a href="{{ route('students.index') }}" class="btn btn-outline-primary btn-sm active">Students</a>
-            <a href="{{ route('employees.index') }}" class="btn btn-outline-primary btn-sm">Faculty</a>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover text-center align-middle">
+        <div class="id-table-wrap">
+            <table class="id-table">
                 <thead>
                     <tr>
                         <th>Profile</th>
@@ -55,20 +64,20 @@
                         <tr>
                             <td>
                                 @if($student->profile_picture)
-                                    <img src="{{ asset($student->profile_picture) }}" alt="Profile" class="profile-img">
+                                    <img src="{{ asset($student->profile_picture) }}" alt="Profile" class="id-profile-img">
                                 @else
-                                    <span>No Image</span>
+                                    <span class="id-no-image">No Image</span>
                                 @endif
                             </td>
                             <td>{{ $student->lastname }}</td>
                             <td>{{ $student->firstname }}</td>
-                            <td>{{ $student->qrcode }}</td>
+                            <td><code class="id-qr">{{ $student->qrcode }}</code></td>
                             <td>{{ $student->course }}</td>
                             <td>{{ $student->year }}</td>
                             <td>{{ $student->role ? ucfirst($student->role->description) : '—' }}</td>
                             <td>
                                 <div class="dropdown">
-                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <button class="id-btn id-btn-sm id-btn-outline dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                         Options
                                     </button>
                                     <ul class="dropdown-menu">
@@ -77,7 +86,7 @@
                                             <form action="{{ route('students.destroy', $student->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="dropdown-item" type="submit">Delete</button>
+                                                <button class="dropdown-item text-danger" type="submit">Delete</button>
                                             </form>
                                         </li>
                                     </ul>
@@ -85,7 +94,7 @@
                             </td>
                             <td>
                                 <div class="dropdown">
-                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <button class="id-btn id-btn-sm id-btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                         Generate
                                     </button>
                                     <ul class="dropdown-menu">
@@ -97,16 +106,23 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="9">No students found.</td></tr>
+                        <tr>
+                            <td colspan="9" class="id-empty">No students found.</td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
-            <div class="d-flex justify-content-center mt-3">
-                {{ $students->appends(request()->query())->links('pagination::bootstrap-5') }}
-            </div>
         </div>
 
-        <a href="{{ route('books.index') }}" id="back" class="btn btn-back mt-3">← Back to Books</a>
+        @if($students->hasPages())
+            <div class="id-pagination">
+                {{ $students->appends(request()->query())->links('pagination::bootstrap-5') }}
+            </div>
+        @endif
+    </div>
+
+    <div class="id-page-footer">
+        <a href="{{ route('book.index') }}" class="id-btn id-btn-ghost">← Back to Home</a>
     </div>
 </div>
 @endsection

@@ -3,39 +3,47 @@
 @section('title', 'Registered Faculty')
 
 @push('styles')
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/students/students.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/students/id_registry.css') }}">
 @endpush
 
 @section('content')
-<div class="card">
-    <div id="rf" class="card-header text-center">
-        <h4 class="mb-0">Registered Faculty</h4>
-    </div>
-
-    <div class="card-body">
-        <div class="mb-3">
-            <div class="d-flex mb-2" style="max-width: 350px;">
-                <form action="{{ route('employees.index') }}" method="GET" class="d-flex w-100">
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Search faculty..." value="{{ request('search') }}">
-                    <button type="submit" id="search" class="btn btn-primary btn-sm ms-2">Search</button>
-                </form>
-            </div>
-
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                <div class="d-flex flex-wrap gap-2">
-                    <a href="{{ route('patron.register', ['tab' => 'employee']) }}" class="btn btn-add" target="_blank">+ Register Faculty</a>
-                </div>
-                <a href="{{ route('pending.index', ['tab' => 'employees']) }}" class="btn btn-warning">View Pending Registrations</a>
-            </div>
-
-            <div class="mb-3 text-center mt-3">
-                <a href="{{ route('students.index') }}" class="btn btn-outline-primary btn-sm">Students</a>
-                <a href="{{ route('employees.index') }}" class="btn btn-outline-primary btn-sm active">Faculty</a>
-            </div>
+<div class="id-page">
+    <div class="id-page-header">
+        <div class="id-page-intro">
+            <p class="id-eyebrow">ID Generation</p>
+            <h1 class="id-title">Registered Faculty</h1>
+            <p class="id-subtitle">Manage faculty records and generate ID cards</p>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover text-center align-middle">
+        <div class="id-tabs" role="tablist" aria-label="Registry type">
+            <a href="{{ route('students.index') }}" class="id-tab" role="tab" aria-selected="false">Students</a>
+            <a href="{{ route('employees.index') }}" class="id-tab active" role="tab" aria-selected="true">Faculty</a>
+        </div>
+    </div>
+
+    <div class="id-toolbar">
+        <form action="{{ route('employees.index') }}" method="GET" class="id-search-form">
+            <input type="text" name="search" class="id-search-input" placeholder="Search faculty by name, department, or position…" value="{{ request('search') }}">
+            <button type="submit" class="id-btn id-btn-search">Search</button>
+        </form>
+
+        <div class="id-toolbar-actions">
+            <a href="{{ route('patron.register', ['tab' => 'employee']) }}" class="id-btn id-btn-primary" target="_blank">+ Register Faculty</a>
+            <a href="{{ route('pending.index', ['tab' => 'employees']) }}" class="id-btn id-btn-secondary">Pending Registrations</a>
+        </div>
+    </div>
+
+    <div class="id-table-card">
+        <div class="id-table-meta">
+            <span>{{ $faculty->total() }} facult{{ $faculty->total() === 1 ? 'y member' : 'y members' }} registered</span>
+        </div>
+
+        <div class="id-table-wrap">
+            <table class="id-table">
                 <thead>
                     <tr>
                         <th>Profile</th>
@@ -52,18 +60,18 @@
                         <tr>
                             <td>
                                 @if($employee->formal_picture)
-                                    <img src="{{ asset($employee->formal_picture) }}" width="80" class="rounded" alt="Profile">
+                                    <img src="{{ asset($employee->formal_picture) }}" alt="Profile" class="id-profile-img">
                                 @else
-                                    No Image
+                                    <span class="id-no-image">No Image</span>
                                 @endif
                             </td>
                             <td>{{ $employee->firstname }} {{ $employee->lastname }}</td>
                             <td>{{ $employee->department }}</td>
                             <td>{{ $employee->position }}</td>
-                            <td>{{ $employee->qrcode }}</td>
+                            <td><code class="id-qr">{{ $employee->qrcode }}</code></td>
                             <td>
                                 <div class="dropdown">
-                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <button class="id-btn id-btn-sm id-btn-outline dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                         Options
                                     </button>
                                     <ul class="dropdown-menu">
@@ -72,7 +80,7 @@
                                             <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="dropdown-item" type="submit">Delete</button>
+                                                <button class="dropdown-item text-danger" type="submit">Delete</button>
                                             </form>
                                         </li>
                                     </ul>
@@ -80,7 +88,7 @@
                             </td>
                             <td>
                                 <div class="dropdown">
-                                    <button class="btn btn-success btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <button class="id-btn id-btn-sm id-btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                         Generate
                                     </button>
                                     <ul class="dropdown-menu">
@@ -92,16 +100,23 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7">No faculty found.</td></tr>
+                        <tr>
+                            <td colspan="7" class="id-empty">No faculty found.</td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
-            <div class="d-flex justify-content-center mt-3">
-                {{ $faculty->withQueryString()->links('pagination::bootstrap-5') }}
-            </div>
         </div>
 
-        <a href="{{ route('books.index') }}" id="back" class="btn btn-back mt-3">← Back to Books</a>
+        @if($faculty->hasPages())
+            <div class="id-pagination">
+                {{ $faculty->withQueryString()->links('pagination::bootstrap-5') }}
+            </div>
+        @endif
+    </div>
+
+    <div class="id-page-footer">
+        <a href="{{ route('book.index') }}" class="id-btn id-btn-ghost">← Back to Home</a>
     </div>
 </div>
 @endsection

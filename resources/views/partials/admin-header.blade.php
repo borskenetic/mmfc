@@ -9,7 +9,7 @@
 
         <a href="{{ route('book.index') }}" class="btn0 btn-sm">Home</a>
         <a class="btn2 btn-sm" href="{{ route('attendance.scan') }}">Attendance</a>
-        <a class="btn2 btn-sm" href="{{ route('attendance_logs.index') }}">Attendance-logs</a>
+        <a class="btn2 btn-sm" href="{{ route('attendance_logs.index') }}">Attendance Logs</a>
         <a class="btn2 btn-sm" href="{{ route('students.report') }}">ID Generation</a>
         <a href="{{ route('files.index') }}" class="btn4 btn-sm" hidden>Repository</a>
         <form action="{{ route('logout') }}" method="POST" class="mb-0">

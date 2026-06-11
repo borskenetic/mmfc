@@ -63,7 +63,7 @@
 
             <a class="btn0 btn-sm">Home</a>
             <a class="btn2 btn-sm" href="{{ route('attendance.scan') }}">Attendance</a>
-            <a class="btn2 btn-sm" href="{{ route('attendance_logs.index') }}">Attendance-logs</a>
+            <a class="btn2 btn-sm" href="{{ route('attendance_logs.index') }}">Attendance Logs</a>
 
 
 

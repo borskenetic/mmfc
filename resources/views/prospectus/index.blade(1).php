@@ -26,7 +26,7 @@
                 <button class="attendance_dropdown-button">Attendance</button>
                 <div class="attendance_dropdown-content">
                     <a href="{{ route('attendance.scan') }}">Attendance</a>
-                    <a href="{{ route('attendance_logs.index') }}">Attendance-logs</a>
+                    <a href="{{ route('attendance_logs.index') }}">Attendance Logs</a>
                 </div>
             </div>
             <a href="{{ route('landing') }}" class="btn2 btn-sm"> OPAC</a>

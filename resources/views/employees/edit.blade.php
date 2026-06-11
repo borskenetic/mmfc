@@ -1,49 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Employee</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+@extends('layouts.admin')
+
+@section('title', 'Edit Employee')
+
+@push('styles')
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        canvas {
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-        .btn-save {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-save:hover {
-            background-color: #0056b3;
-        }
+        canvas { border: 1px solid #ccc; border-radius: 6px; }
     </style>
-</head>
-<body>
+@endpush
 
-<div class="container mt-5 mb-5">
-    <div class="card">
-        <div class="card-header text-center">
-            <h4>Edit Employee Information</h4>
-        </div>
+@section('content')
+<div class="card">
+    <div class="card-header text-center">
+        <h4 class="mb-0">Edit Employee Information</h4>
+    </div>
 
-        <div class="card-body">
-            
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-            
-            <form id="employeeForm" method="POST" action="{{ route('employees.update', $employee->id) }}" enctype="multipart/form-data">
+    <div class="card-body">
+        <form id="employeeForm" method="POST" action="{{ route('employees.update', $employee->id) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -165,11 +137,13 @@
                     <button type="submit" class="btn btn-save px-4">Update Employee</button>
                     <a href="{{ route('employees.index') }}" class="btn btn-secondary px-4">Back</a>
                 </div>
-            </form>
-        </div>
+        </form>
     </div>
 </div>
+@endsection
 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script>
     const canvas = document.getElementById('employeeSignaturePad');
     const signaturePad = new SignaturePad(canvas);
@@ -186,8 +160,4 @@
         }
     });
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+@endpush

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Employee;
 use App\Models\Role;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class PendingEmployeeController extends Controller
@@ -20,8 +21,7 @@ class PendingEmployeeController extends Controller
 
     public function index()
     {
-        $pending = PendingEmployee::with('role')->latest()->get();
-        return view('pending.index', compact('pending'));
+        return redirect()->route('pending.index', ['tab' => 'employees']);
     }
 
     public function store(Request $request)
@@ -32,20 +32,20 @@ class PendingEmployeeController extends Controller
             'firstname' => 'required|string|max:255',
             'lastname'  => 'required|string|max:255',
             'department' => 'required|string|max:255',
-            'position' => 'nullable|string|max:255',
-            'status' => 'nullable|string|max:255',
+            'position' => 'required|string|max:255',
+            'status' => 'required|string|max:255',
             'employee_id' => 'required|string|max:255|unique:pending_employees,employee_id',
-            'birth_date' => 'nullable|date',
-            'sex' => 'nullable|string|max:20',
+            'birth_date' => 'required|date',
+            'sex' => 'required|string|max:20',
             'civil_status' => 'nullable|string|max:50',
             'blood_type' => 'nullable|string|max:5',
             'tin_id_number' => 'required|regex:/^[0-9]+$/|max:255',
             'philhealth_number' => 'required|regex:/^[0-9]+$/|max:255',
             'sss_number' => 'required|regex:/^[0-9]+$/|max:255',
             'hdmf_number' => 'required|regex:/^[0-9]+$/|max:255',
-            'emergency_contact_name' => 'nullable|string|max:255',
-            'emergency_contact_relationship' => 'nullable|string|max:255',
-            'emergency_contact_number' => 'nullable|string|max:255',
+            'emergency_contact_name' => 'required|string|max:255',
+            'emergency_contact_relationship' => 'required|string|max:255',
+            'emergency_contact_number' => 'required|string|max:255',
             'address' => 'nullable|string',
             'formal_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
             'employee_signature' => 'nullable|string',
@@ -62,13 +62,18 @@ class PendingEmployeeController extends Controller
     
         // Set role_id = 2 (Faculty)
         $validated['role_id'] = 2;
-    
+        $validated['employee_number'] = $validated['employee_id'];
+
         // Handle profile picture upload
         if ($request->hasFile('formal_picture')) {
             $file = $request->file('formal_picture');
             $filename = time() . '_profile_' . preg_replace('/\s+/', '_', $file->getClientOriginalName());
             $file->move(base_path('images/formal_pictures'), $filename);
             $validated['formal_picture'] = 'images/formal_pictures/' . $filename;
+
+            if (Schema::hasColumn('pending_employees', 'profile_picture')) {
+                $validated['profile_picture'] = $validated['formal_picture'];
+            }
         }
     
         // Handle signature from base64

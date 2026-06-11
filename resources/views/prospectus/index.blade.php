@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Prospectus Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ asset('public/css/prospectus/index.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/prospectus/index.css') }}">
 </head>
 <body class="bg-gray-100 text-gray-800">
     <!-- ✅ Header (same as attendance_logs) -->
@@ -262,6 +262,6 @@
     <!-- Toast Container -->
     <div id="toastContainer" class="fixed bottom-5 right-5 space-y-2 z-50"></div>
     <!-- Scripts -->
-    <script src="{{ asset('public/js/prospectus.js') }}"></script>
+    <script src="{{ asset('js/prospectus.js') }}"></script>
 </body>
 </html>

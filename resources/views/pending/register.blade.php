@@ -37,6 +37,8 @@
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
 
+            @include('partials.validation-errors')
+
             <div class="text-center mb-4">
                 <button type="button" class="btn btn-outline-primary me-2" id="btnStudent">Student</button>
                 <button type="button" class="btn btn-outline-success" id="btnEmployee">Employee</button>
@@ -326,14 +328,24 @@ const employeePad = setupSignaturePad('employeeSignaturePad', 'employeeSignature
 document.getElementById('btnStudent').addEventListener('click', () => {
     document.getElementById('studentForm').classList.remove('hidden');
     document.getElementById('employeeForm').classList.add('hidden');
+    document.getElementById('btnStudent').classList.replace('btn-outline-primary', 'btn-primary');
+    document.getElementById('btnEmployee').classList.replace('btn-success', 'btn-outline-success');
     setTimeout(() => studentPad.resize(), 50);
 });
 
 document.getElementById('btnEmployee').addEventListener('click', () => {
     document.getElementById('employeeForm').classList.remove('hidden');
     document.getElementById('studentForm').classList.add('hidden');
+    document.getElementById('btnEmployee').classList.replace('btn-outline-success', 'btn-success');
+    document.getElementById('btnStudent').classList.replace('btn-primary', 'btn-outline-primary');
     setTimeout(() => employeePad.resize(), 50);
 });
+
+/* Open correct tab from URL (?tab=employee) */
+const initialTab = new URLSearchParams(window.location.search).get('tab');
+if (initialTab === 'employee') {
+    document.getElementById('btnEmployee').click();
+}
 
 /* Restrict government ID fields to numbers only */
 document.querySelectorAll('#employeeForm .numeric-only').forEach(input => {

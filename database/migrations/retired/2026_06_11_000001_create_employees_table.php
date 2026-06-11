@@ -8,37 +8,36 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('pending_employees', function (Blueprint $table) {
+        if (Schema::hasTable('employees')) {
+            return;
+        }
+
+        Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            
-            // Foreign keys (if using roles & users like students)
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null');
-            
-            // FRONT SIDE
-            $table->string('employee_id')->unique()->nullable();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('role_id')->nullable()->constrained('roles')->nullOnDelete();
+            $table->string('employee_id')->nullable()->unique();
             $table->string('formal_picture')->nullable();
             $table->string('department')->nullable();
-            $table->string('employee_name');
+            $table->string('firstname');
+            $table->string('lastname');
             $table->string('position')->nullable();
+            $table->string('status')->nullable();
             $table->string('employee_number')->nullable();
-            
-            // BACK SIDE
             $table->date('birth_date')->nullable();
-            $table->string('sex', 20)->nullable(); // Male, Female, Others
+            $table->string('sex', 20)->nullable();
             $table->string('tin_id_number')->nullable();
             $table->string('philhealth_number')->nullable();
             $table->string('civil_status')->nullable();
             $table->string('blood_type', 5)->nullable();
             $table->string('sss_number')->nullable();
             $table->string('hdmf_number')->nullable();
-            $table->string('qrcode')->unique()->nullable();
+            $table->string('qrcode')->nullable()->unique();
             $table->string('emergency_contact_name')->nullable();
             $table->string('emergency_contact_relationship')->nullable();
             $table->text('address')->nullable();
             $table->string('emergency_contact_number')->nullable();
-            $table->string('employee_signature')->nullable(); // file path to saved signature
-
+            $table->string('employee_signature')->nullable();
             $table->timestamps();
         });
     }

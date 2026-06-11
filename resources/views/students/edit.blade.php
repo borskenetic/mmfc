@@ -1,49 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Student</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+@extends('layouts.admin')
+
+@section('title', 'Edit Student')
+
+@push('styles')
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        canvas {
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-        .btn-save {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-save:hover {
-            background-color: #0056b3;
-        }
+        canvas { border: 1px solid #ccc; border-radius: 6px; }
     </style>
-</head>
-<body>
+@endpush
 
-<div class="container mt-5 mb-5">
-    <div class="card">
-        <div class="card-header text-center">
-            <h4>Edit Student Information</h4>
-        </div>
+@section('content')
+<div class="card">
+    <div class="card-header text-center">
+        <h4 class="mb-0">Edit Student Information</h4>
+    </div>
 
-        <div class="card-body">
-            
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-            
-            <form id="studentForm" method="POST" action="{{ route('students.update', $student->id) }}" enctype="multipart/form-data">
+    <div class="card-body">
+        <form id="studentForm" method="POST" action="{{ route('students.update', $student->id) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -71,13 +43,11 @@
                     </div>
 
                     <div class="col-md-6">
-                        <select name="year" class="form-select" >
+                        <select name="year" class="form-select">
                             <option value="">Select Year</option>
-                            <option value="First Year" {{ old('year', $student->year) == 'First Year' ? 'selected' : '' }}>First Year</option>
-                            <option value="Second Year" {{ old('year', $student->year) == 'Second Year' ? 'selected' : '' }}>Second Year</option>
-                            <option value="Third Year" {{ old('year', $student->year) == 'Third Year' ? 'selected' : '' }}>Third Year</option>
-                            <option value="Fourth Year" {{ old('year', $student->year) == 'Fourth Year' ? 'selected' : '' }}>Fourth Year</option>
-                            <option value="Fifth Year" {{ old('year', $student->year) == 'Fifth Year' ? 'selected' : '' }}>Fifth Year</option>
+                            @foreach(['1ST YEAR','2ND YEAR','3RD YEAR','4TH YEAR','5TH YEAR','First Year','Second Year','Third Year','Fourth Year','Fifth Year'] as $yearOption)
+                                <option value="{{ $yearOption }}" {{ old('year', $student->year) == $yearOption ? 'selected' : '' }}>{{ $yearOption }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -153,11 +123,13 @@
                     <button type="submit" class="btn btn-save px-4">Update Student</button>
                     <a href="{{ route('students.index') }}" class="btn btn-secondary px-4">Back</a>
                 </div>
-            </form>
-        </div>
+        </form>
     </div>
 </div>
+@endsection
 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script>
     const canvas = document.getElementById('studentSignaturePad');
     const signaturePad = new SignaturePad(canvas);
@@ -174,8 +146,4 @@
         }
     });
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+@endpush

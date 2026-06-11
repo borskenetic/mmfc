@@ -13,7 +13,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AttendanceLogController;
 use App\Http\Controllers\ExportController;
-use App\Http\Controllers\PatronRegistrationController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\IdCardController;
@@ -86,22 +86,25 @@ Route::middleware(['auth', 'can:isAdminOrStaff'])->group(function () {
     Route::get('/pending/employees', [PendingEmployeeController::class, 'index'])->name('pending.employees');
     Route::post('/pending/employees/approve/{id}', [PendingEmployeeController::class, 'approve'])->name('employees.approve');
     Route::post('/pending/employees/reject/{id}', [PendingEmployeeController::class, 'reject'])->name('employees.reject');
-    
+
+    Route::get('/students/report', [StudentController::class, 'index'])->name('students.report');
+    Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+    Route::get('/students/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');
+    Route::put('/students/{id}', [StudentController::class, 'update'])->name('students.update');
+    Route::delete('/students/{id}', [StudentController::class, 'destroy'])->name('students.destroy');
+    Route::get('/students/faculty', [StudentController::class, 'faculty'])->name('students.faculty');
+
     Route::prefix('employees')->group(function () {
-        Route::get('/', [EmployeeController::class, 'index'])->name('employees.index'); // List faculty
-        Route::get('/edit/{id}', [EmployeeController::class, 'edit'])->name('employees.edit'); // Edit faculty
-        Route::put('/update/{id}', [EmployeeController::class, 'update'])->name('employees.update'); // Update faculty
-        Route::delete('/delete/{id}', [EmployeeController::class, 'destroy'])->name('employees.destroy'); // Delete faculty
-    
-        // ID Card generation
-        Route::get('/id/front/{id}', [IdCardController::class, 'front'])->name('employees.id.front');
-        Route::get('/id/back/{id}', [IdCardController::class, 'back'])->name('employees.id.back');
-        Route::get('/id/download/{id}', [IdCardController::class, 'downloadZip'])->name('employees.id.download');
-    });
-    Route::prefix('employees/idcard')->group(function () {
-        Route::get('/front/{id}', [EmployeeIdCardController::class, 'front'])->name('employees.id.front');
-        Route::get('/back/{id}', [EmployeeIdCardController::class, 'back'])->name('employees.id.back');
-        Route::get('/download/{id}', [EmployeeIdCardController::class, 'download'])->name('employees.id.download');
+        Route::get('/', [EmployeeController::class, 'index'])->name('employees.index');
+        Route::get('/edit/{id}', [EmployeeController::class, 'edit'])->name('employees.edit');
+        Route::put('/update/{id}', [EmployeeController::class, 'update'])->name('employees.update');
+        Route::delete('/delete/{id}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+
+        Route::prefix('idcard')->group(function () {
+            Route::get('/front/{id}', [EmployeeIdCardController::class, 'front'])->name('employees.id.front');
+            Route::get('/back/{id}', [EmployeeIdCardController::class, 'back'])->name('employees.id.back');
+            Route::get('/download/{id}', [EmployeeIdCardController::class, 'download'])->name('employees.id.download');
+        });
     });
 });
 
@@ -130,16 +133,10 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
     // Store new subject
     Route::post('/prospectus/store-subject', [ProspectusController::class, 'storeSubject'])->name('prospectus.storeSubject');
 
-    // Student Management
+    // Student Management (admin quick-add)
     Route::get('/register-student', [StudentController::class, 'create'])->name('students.create');
     Route::post('/register-student', [StudentController::class, 'store'])->name('students.store');
-    Route::get('/students/report', [StudentController::class, 'index'])->name('students.report');
-    Route::get('/students/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');
-    Route::put('/students/{id}', [StudentController::class, 'update'])->name('students.update');
-    Route::delete('/students/{id}', [StudentController::class, 'destroy'])->name('students.destroy');
-    Route::get('/students/faculty', [StudentController::class, 'faculty'])->name('students.faculty');
-    Route::get('/students', [StudentController::class, 'index'])->name('students.index');
-    Route::get('/idcard/download/{id}', [App\Http\Controllers\IdCardController::class, 'download'])->name('idcard.download');
+    Route::get('/idcard/download/{id}', [IdCardController::class, 'download'])->name('idcard.download');
 
 
     // Attendance Logs

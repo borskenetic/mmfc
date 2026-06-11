@@ -16,30 +16,12 @@ class StudentController extends Controller
     // Show all students
     public function index(Request $request)
     {
-        return $this->getStudentsByRole($request, 'Student');
+        return $this->getStudentsByRole($request, 'student');
     }
-    
+
     public function faculty(Request $request)
     {
-        $search = $request->input('search');
-    
-        $faculty = Employee::with('role')
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('firstname', 'like', "%{$search}%")
-                      ->orWhere('lastname', 'like', "%{$search}%")
-                      ->orWhere('department', 'like', "%{$search}%")
-                      ->orWhere('position', 'like', "%{$search}%");
-                });
-            })
-            ->orderBy('lastname', 'asc')
-            ->orderBy('firstname', 'asc')
-            ->paginate(15);
-    
-        return view('students.index', [
-            'students' => $faculty,
-            'roleDescription' => 'Faculty'
-        ]);
+        return redirect()->route('employees.index', $request->query());
     }
     
 
@@ -47,7 +29,7 @@ class StudentController extends Controller
     {
         $query = Student::with('role')
             ->whereHas('role', function ($q) use ($roleDescription) {
-                $q->where('description', $roleDescription);
+                $q->whereRaw('LOWER(description) = ?', [strtolower($roleDescription)]);
             });
     
         // Search filter
@@ -88,11 +70,22 @@ class StudentController extends Controller
         $validated = $request->validate([
             'lastname' => 'required|string|max:255',
             'firstname' => 'required|string|max:255',
+            'student_id' => 'nullable|string|max:255',
+            'birth_date' => 'nullable|date',
+            'blood_type' => 'nullable|string|max:5',
             'course' => 'required|string',
             'year' => 'required|string',
-            'role_id' => 'required|exists:roles,id',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'role_id' => 'nullable|exists:roles,id',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_relationship' => 'nullable|string|max:255',
+            'emergency_contact_number' => 'nullable|string|max:255',
+            'emergency_address' => 'nullable|string|max:255',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
+
+        if (empty($validated['role_id'])) {
+            $validated['role_id'] = Role::whereRaw('LOWER(description) = ?', ['student'])->value('id') ?? 1;
+        }
     
         // ✅ Save profile picture
         if ($request->hasFile('profile_picture')) {
@@ -201,8 +194,7 @@ class StudentController extends Controller
     
     public function pending()
     {
-        $pendingStudents = PendingStudent::with('role')->get();
-        return view('students.pending', compact('pendingStudents'));
+        return redirect()->route('pending.index');
     }
     
     public function approve($id)

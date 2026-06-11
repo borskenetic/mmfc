@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Attendance Logs</title>
-    <link rel="stylesheet" href="{{ asset('public/css/attendance_logs/index.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/attendance_logs/index.css') }}">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 

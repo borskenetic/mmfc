@@ -42,11 +42,20 @@ php artisan key:generate
 
 Update `.env` with your database credentials and `APP_URL`.
 
-5. Run migrations:
+5. Run migrations (fresh local database):
 
 ```bash
-php artisan migrate
+php artisan migrate:fresh --seed
 ```
+
+This creates all tables and seeds default users:
+
+| Email | Password | Role |
+|-------|----------|------|
+| `admin@mmfc.local` | `password` | admin |
+| `staff@mmfc.local` | `password` | staff |
+
+Old migrations are archived in `database/migrations/retired/` and are not used.
 
 6. Link public storage (if needed):
 

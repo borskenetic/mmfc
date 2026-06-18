@@ -12,7 +12,6 @@
         <div class="card shadow-lg">
             <div class="card-header text-center">
                 <h4 class="mb-0">Register Patron (Admin)</h4>
-                <small class="text-muted">For self-registration, share the <a href="{{ route('patron.register') }}" target="_blank">public registration form</a>.</small>
             </div>
 
             <div class="card-body">
@@ -44,12 +43,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Course</label>
-                            <select name="course" class="form-select" required>
-                                <option value="">Select Course</option>
-                                @foreach($courses as $course)
-                                    <option value="{{ $course }}" {{ old('course') == $course ? 'selected' : '' }}>{{ $course }}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" name="course" class="form-control" placeholder="e.g. BSIT / Bachelor of Science in Nursing" value="{{ old('course') }}" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Year</label>

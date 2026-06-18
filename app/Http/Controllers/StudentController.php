@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
-use App\Models\Prospectus;
 use App\Models\Employee;
 use App\Models\Role;
 use App\Models\PendingStudent;
@@ -58,9 +57,8 @@ class StudentController extends Controller
     // Show form to create new student
     public function create()
     {
-        $courses = Prospectus::select('course')->distinct()->pluck('course');
         $roles = Role::all();
-        return view('students.create', compact('courses', 'roles'));
+        return view('students.create', compact('roles'));
     }
 
     // Store new student
@@ -110,9 +108,9 @@ class StudentController extends Controller
     public function edit($id)
     {
         $student = Student::findOrFail($id);
-        $courses = Prospectus::select('course')->distinct()->pluck('course');
         $roles = Role::all();
-        return view('students.edit', compact('student', 'courses', 'roles'));
+
+        return view('students.edit', compact('student', 'roles'));
     }
 
     public function update(Request $request, $id)

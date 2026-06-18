@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
+use App\Support\QrCodePng;
+use App\Support\SignatureImage;
 use Intervention\Image\Facades\Image;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use ZipArchive;
 use Illuminate\Support\Facades\Response;
 use Carbon\Carbon;
@@ -139,10 +140,7 @@ class IdCardController extends Controller
         $img = Image::make(base_path('images/id_templates/back.png'));
 
         // QR Code
-        $qrPng = QrCode::format('png')
-            ->size(1300)
-            ->margin(0)
-            ->generate($student->qrcode);
+        $qrPng = QrCodePng::generate($student->qrcode, 1300, 0);
         $qrImage = Image::make((string) $qrPng);
 
         // Birth date
@@ -216,10 +214,14 @@ class IdCardController extends Controller
         }
 
 
-        // Signature
+        // Signature — placed on the "STUDENT SIGNATURE" line at the bottom of the card
         if ($student->student_signature && file_exists(base_path($student->student_signature))) {
-            $signature = Image::make(base_path($student->student_signature))->resize(2000, 1000);
-            $img->insert($signature, 'center', 50, 2875);
+            $signature = SignatureImage::forIdOverlay(base_path($student->student_signature), 1100, 280);
+
+            $sigX = (int) (($img->width() - $signature->width()) / 2);
+            $sigY = 6420;
+
+            $img->insert($signature, 'top-left', $sigX, $sigY);
         }
 
         // QR code

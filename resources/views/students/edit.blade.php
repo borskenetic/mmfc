@@ -63,15 +63,7 @@
                     <div class="id-form-grid">
                         <div class="id-field">
                             <label for="course">Course</label>
-                            <select id="course" name="course" class="id-input">
-                                <option value="">Select Course</option>
-                                @foreach($courses as $course)
-                                    <option value="{{ $course }}" {{ old('course', $student->course) == $course ? 'selected' : '' }}>{{ $course }}</option>
-                                @endforeach
-                                @if($student->course && !$courses->contains($student->course))
-                                    <option value="{{ $student->course }}" selected>{{ $student->course }}</option>
-                                @endif
-                            </select>
+                            <input type="text" id="course" name="course" class="id-input" placeholder="e.g. BSIT / Bachelor of Science in Nursing" value="{{ old('course', $student->course) }}">
                         </div>
                         <div class="id-field">
                             <label for="year">Year Level</label>

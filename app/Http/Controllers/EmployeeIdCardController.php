@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Employee;
+use App\Support\QrCodePng;
+use App\Support\SignatureImage;
 use Intervention\Image\Facades\Image;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use ZipArchive;
 
 class EmployeeIdCardController extends Controller
@@ -118,17 +119,14 @@ class EmployeeIdCardController extends Controller
         $img = Image::make(base_path('images/id_templates/back_employee.png'));
 
         // --- QR Code (Employee ID) ---
-        $qrPng = QrCode::format('png')
-            ->size(270)
-            ->margin(0)
-            ->generate($employee->employee_id ?? $employee->id);
+        $qrPng = QrCodePng::generate($employee->employee_id ?? (string) $employee->id, 270, 0);
 
         $qrImage = Image::make((string) $qrPng);
         $img->insert($qrImage, 'top-left', 750, 45);
 
         // --- Signature ---
         if ($employee->employee_signature && file_exists(base_path($employee->employee_signature))) {
-            $signature = Image::make(base_path($employee->employee_signature))->resize(400, 150);
+            $signature = SignatureImage::forIdOverlay(base_path($employee->employee_signature), 400, 150);
             $img->insert($signature, 'center', 290, 285);
         }
 

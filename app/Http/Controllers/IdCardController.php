@@ -214,15 +214,7 @@ class IdCardController extends Controller
         }
 
 
-        // Signature — placed on the "STUDENT SIGNATURE" line at the bottom of the card
-        if ($student->student_signature && file_exists(base_path($student->student_signature))) {
-            $signature = SignatureImage::forIdOverlay(base_path($student->student_signature), 1100, 280);
-
-            $sigX = (int) (($img->width() - $signature->width()) / 2);
-            $sigY = 6420;
-
-            $img->insert($signature, 'top-left', $sigX, $sigY);
-        }
+        SignatureImage::insertOnStudentCard($img, $student->student_signature);
 
         // QR code
         $img->insert($qrImage, 'top-left', 620, 510);

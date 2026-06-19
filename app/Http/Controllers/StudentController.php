@@ -153,12 +153,12 @@ class StudentController extends Controller
             if (preg_match('/data:image\/(jpeg|jpg)/i', $meta)) $ext = 'jpg';
             $sigName = time() . '_sig.' . $ext;
     
-            if (!file_exists(base_path('images/signatures'))) {
-                mkdir(base_path('images/signatures'), 0755, true);
+            if (!file_exists(base_path('images/student_signatures'))) {
+                mkdir(base_path('images/student_signatures'), 0755, true);
             }
-    
-            file_put_contents(base_path('images/signatures/' . $sigName), base64_decode($contents));
-            $validated['student_signature'] = 'images/signatures/' . $sigName;
+
+            file_put_contents(base_path('images/student_signatures/' . $sigName), base64_decode($contents));
+            $validated['student_signature'] = 'images/student_signatures/' . $sigName;
         }
     
         // ✅ Update record

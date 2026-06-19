@@ -125,9 +125,16 @@ class EmployeeIdCardController extends Controller
         $img->insert($qrImage, 'top-left', 750, 45);
 
         // --- Signature ---
-        if ($employee->employee_signature && file_exists(base_path($employee->employee_signature))) {
-            $signature = SignatureImage::forIdOverlay(base_path($employee->employee_signature), 400, 150);
-            $img->insert($signature, 'center', 290, 285);
+        if ($employee->employee_signature) {
+            SignatureImage::insertOnCard(
+                $img,
+                $employee->employee_signature,
+                400,
+                150,
+                'center',
+                290,
+                285
+            );
         }
 
        if ($employee->birth_date) {

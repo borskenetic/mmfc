@@ -401,6 +401,27 @@ document.querySelectorAll('#employeeForm .numeric-only').forEach(input => {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 });
+
+function forceUppercase(value) {
+    return value.toUpperCase();
+}
+
+document.querySelectorAll('input[type="text"]:not(.numeric-only), textarea.reg-input').forEach(input => {
+    input.addEventListener('input', function () {
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        this.value = forceUppercase(this.value);
+        this.setSelectionRange(start, end);
+    });
+});
+
+[studentForm, employeeForm].forEach(form => {
+    form.addEventListener('submit', function () {
+        form.querySelectorAll('input[type="text"]:not(.numeric-only), textarea.reg-input').forEach(input => {
+            input.value = forceUppercase(input.value);
+        });
+    });
+});
 </script>
 
 </body>

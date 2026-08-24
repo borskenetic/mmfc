@@ -202,5 +202,14 @@
         };
         reader.readAsDataURL(file);
     });
+
+    document.querySelectorAll('#studentForm input[type="text"]:not(.numeric-only), #studentForm textarea').forEach(input => {
+        input.addEventListener('input', function () {
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            this.value = this.value.toUpperCase();
+            this.setSelectionRange(start, end);
+        });
+    });
 </script>
 @endpush

@@ -9,6 +9,7 @@ use App\Models\Employee;
 use App\Models\Role;
 use App\Models\PendingStudent;
 use Illuminate\Support\Facades\DB;
+use App\Support\RegistrationData;
 
 class StudentController extends Controller
 {
@@ -98,6 +99,8 @@ class StudentController extends Controller
         $lastCode = $lastStudent ? intval($lastStudent->qrcode) : 0;
         $newCode = str_pad($lastCode + 1, 8, '0', STR_PAD_LEFT);
         $validated['qrcode'] = $newCode;
+
+        $validated = RegistrationData::uppercaseStudentFields($validated);
     
         Student::create($validated);
     
@@ -161,6 +164,8 @@ class StudentController extends Controller
             $validated['student_signature'] = 'images/student_signatures/' . $sigName;
         }
     
+        $validated = RegistrationData::uppercaseStudentFields($validated);
+
         // ✅ Update record
         $student->update($validated);
     
@@ -211,7 +216,7 @@ class StudentController extends Controller
             $rid = 1; // change this if your students use a different role_id
     
             // Insert full student record
-            $student = Student::create([
+            $studentData = RegistrationData::uppercaseStudentFields([
                 'student_id' => $pending->student_id,
                 'firstname'  => $pending->firstname,
                 'lastname'   => $pending->lastname,
@@ -228,6 +233,8 @@ class StudentController extends Controller
                 'student_signature' => $pending->student_signature,
                 'role_id' => $rid,
             ]);
+
+            $student = Student::create($studentData);
     
             // Delete from pending once approved
             $pending->delete();

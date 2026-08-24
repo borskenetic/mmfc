@@ -7,6 +7,7 @@ use App\Models\PendingStudent;
 use App\Models\PendingEmployee;
 use App\Models\Role;
 use Illuminate\Support\Str;
+use App\Support\RegistrationData;
 
 class PendingStudentController extends Controller
 {
@@ -99,6 +100,8 @@ class PendingStudentController extends Controller
             $nextNumber = $lastNum + 1;
         }
         $validated['qrcode'] = 'S-' . str_pad($nextNumber, 8, '0', STR_PAD_LEFT);
+
+        $validated = RegistrationData::uppercaseStudentFields($validated);
 
         // Save
         PendingStudent::create($validated);

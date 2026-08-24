@@ -10,6 +10,7 @@ use App\Models\Role;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use App\Support\RegistrationData;
 
 class PendingEmployeeController extends Controller
 {
@@ -101,6 +102,8 @@ class PendingEmployeeController extends Controller
         }
         $validated['qrcode'] = 'E-' . str_pad($nextNumber, 8, '0', STR_PAD_LEFT);
     
+        $validated = RegistrationData::uppercaseEmployeeFields($validated);
+
         // Save
         PendingEmployee::create($validated);
     
@@ -130,8 +133,8 @@ class PendingEmployeeController extends Controller
             $rid = 2;
     
             // Insert into real employees table
-            Employee::create([
-                'employee_id'   => $pending->employee_id, // unique ID from pending table
+            $employeeData = RegistrationData::uppercaseEmployeeFields([
+                'employee_id'   => $pending->employee_id,
                 'formal_picture'=> $pending->formal_picture,
                 'department'    => $pending->department,
                 'firstname'     => $pending->firstname,
@@ -155,6 +158,8 @@ class PendingEmployeeController extends Controller
                 'employee_signature' => $pending->employee_signature ?? null,
                 'role_id'       => $rid,
             ]);
+
+            Employee::create($employeeData);
             // Delete pending record after approval
             $pending->delete();
     

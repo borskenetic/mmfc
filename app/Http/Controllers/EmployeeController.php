@@ -8,6 +8,7 @@ use Intervention\Image\Facades\Image;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use ZipArchive;
 use Illuminate\Support\Facades\Response;
+use App\Support\RegistrationData;
 
 class EmployeeController extends Controller
 {
@@ -102,6 +103,8 @@ class EmployeeController extends Controller
             $validated['employee_signature'] = 'images/signatures/' . $sigName;
         }
     
+        $validated = RegistrationData::uppercaseEmployeeFields($validated);
+
         // ✅ Update record
         $employee->update($validated);
     

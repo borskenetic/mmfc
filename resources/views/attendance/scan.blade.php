@@ -44,6 +44,8 @@
         <div class="scan-animation"></div>
         @if(isset($student) && $student->profile_picture)
           <img src="{{ asset($student->profile_picture) }}" alt="Profile">
+        @elseif(isset($employee) && $employee->formal_picture)
+          <img src="{{ asset($employee->formal_picture) }}" alt="Profile">
         @else
           <img src="{{ asset('images/2x2_undifined_gender.jpg') }}" alt="Default Profile">
         @endif
@@ -51,8 +53,21 @@
 
       @if(isset($student))
         <div class="name-box">
-          <div class="name-box-label">Patron</div>
+          <div class="name-box-label">Student</div>
           <div class="student-name">{{ $student->firstname }} {{ $student->lastname }}</div>
+          <div class="status-button {{ strtolower($status) === 'out' ? 'status-out' : 'status-in' }}">
+            {{ $status }}
+          </div>
+          <div class="timestamp">
+            {{ isset($log) ? \Carbon\Carbon::parse($log->scanned_at)->format('M d, Y · h:i A') : '' }}
+          </div>
+        </div>
+      @endif
+
+      @if(isset($employee))
+        <div class="name-box">
+          <div class="name-box-label">Employee</div>
+          <div class="student-name">{{ $employee->firstname }} {{ $employee->lastname }}</div>
           <div class="status-button {{ strtolower($status) === 'out' ? 'status-out' : 'status-in' }}">
             {{ $status }}
           </div>

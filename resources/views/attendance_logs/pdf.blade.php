@@ -17,7 +17,7 @@
             <tr>
                 <th>Last Name</th>
                 <th>First Name</th>
-                <th>Course</th> <!-- ✅ ADD THIS -->
+                <th>Course / Dept</th>
                 <th>Status</th>
                 <th>Scanned At</th>
             </tr>
@@ -25,9 +25,9 @@
         <tbody>
             @foreach($logs as $log)
                 <tr>
-                    <td>{{ $log->student->lastname ?? 'Unknown' }}</td>
-                    <td>{{ $log->student->firstname ?? 'Unknown' }}</td>
-                    <td>{{ $log->student->course ?? 'Unknown' }}</td> 
+                    <td>{{ $log->student?->lastname ?? $log->employee?->lastname ?? 'Unknown' }}</td>
+                    <td>{{ $log->student?->firstname ?? $log->employee?->firstname ?? 'Unknown' }}</td>
+                    <td>{{ $log->student?->course ?? $log->employee?->department ?? 'Unknown' }}</td> 
                     <td>{{ strtoupper($log->status) }}</td>
                     <td>
     {{ $log->scanned_at ? \Carbon\Carbon::parse($log->scanned_at, 'UTC')->timezone('Asia/Manila')->format('Y-m-d h:i A') : '—' }}                    

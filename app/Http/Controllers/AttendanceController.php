@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\AttendanceLog;
 use App\Models\Student;
+use App\Models\Employee;
 use App\Models\Book;
 use App\Models\BookLog;
 use Carbon\Carbon;
@@ -19,13 +20,13 @@ class AttendanceController extends Controller
     public function scan(Request $request)
     {
         $request->validate(['qrcode' => 'required|string']);
-        $rfid = $request->qrcode;
+        $rfid = trim($request->qrcode);
 
         // ✅ Try student first
         $student = Student::where('qrcode', $rfid)->first();
         if ($student) {
             $lastLog = AttendanceLog::where('student_id', $student->id)->latest()->first();
-            $newStatus = $lastLog && $lastLog->status === 'IN' ? 'OUT' : 'IN';
+            $newStatus = $lastLog && strtoupper($lastLog->status) === 'IN' ? 'OUT' : 'IN';
 
             $log = AttendanceLog::create([
                 'student_id' => $student->id,
@@ -35,6 +36,29 @@ class AttendanceController extends Controller
 
             return view('attendance.scan', [
                 'student' => $student,
+                'status' => $newStatus,
+                'log' => $log,
+            ]);
+        }
+
+        // ✅ Try employee (printed QR uses employee_id; DB also stores qrcode)
+        $employee = Employee::where(function ($query) use ($rfid) {
+            $query->where('employee_id', $rfid)
+                ->orWhere('qrcode', $rfid);
+        })->first();
+
+        if ($employee) {
+            $lastLog = AttendanceLog::where('employee_id', $employee->id)->latest()->first();
+            $newStatus = $lastLog && strtoupper($lastLog->status) === 'IN' ? 'OUT' : 'IN';
+
+            $log = AttendanceLog::create([
+                'employee_id' => $employee->id,
+                'status' => $newStatus,
+                'scanned_at' => Carbon::now(),
+            ]);
+
+            return view('attendance.scan', [
+                'employee' => $employee,
                 'status' => $newStatus,
                 'log' => $log,
             ]);
@@ -54,7 +78,7 @@ class AttendanceController extends Controller
             ]);
         }
 
-        // ❌ Neither student nor book
+        // ❌ Neither student, employee, nor book
         return view('attendance.scan')->with('error', 'RFID not recognized.');
     }
 }

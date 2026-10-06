@@ -13,7 +13,7 @@ class AttendanceLogController extends Controller
 {
     public function index(Request $request)
     {
-        $logs = AttendanceLog::with('student')
+        $logs = AttendanceLog::with(['student', 'employee'])
             ->when($request->from, fn($q) => $q->whereDate('scanned_at', '>=', $request->from))
             ->when($request->to, fn($q) => $q->whereDate('scanned_at', '<=', $request->to))
             ->when($request->student_name, fn($q) => $q->where('student_id', $request->student_name))
@@ -55,7 +55,7 @@ class AttendanceLogController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $logs = AttendanceLog::with('student')
+        $logs = AttendanceLog::with(['student', 'employee'])
             ->when($request->from, fn($q) => $q->whereDate('scanned_at', '>=', $request->from))
             ->when($request->to, fn($q) => $q->whereDate('scanned_at', '<=', $request->to))
             ->when($request->student_name, fn($q) => $q->where('student_id', $request->student_name))
@@ -74,7 +74,7 @@ class AttendanceLogController extends Controller
 
     public function exportExcel(Request $request)
     {
-        $logs = AttendanceLog::with('student')
+        $logs = AttendanceLog::with(['student', 'employee'])
             ->when($request->from, fn($q) => $q->whereDate('scanned_at', '>=', $request->from))
             ->when($request->to, fn($q) => $q->whereDate('scanned_at', '<=', $request->to))
             ->when($request->student_name, fn($q) => $q->where('student_id', $request->student_name))

@@ -79,6 +79,8 @@ class AttendanceController extends Controller
         }
 
         // ❌ Neither student, employee, nor book
-        return view('attendance.scan')->with('error', 'RFID not recognized.');
+        return view('attendance.scan', [
+            'error' => 'RFID not recognized.',
+        ]);
     }
 }

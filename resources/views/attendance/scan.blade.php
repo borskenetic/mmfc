@@ -87,10 +87,11 @@
         </div>
       @endif
 
-      @if(session('error'))
+      @php $scanError = $error ?? session('error') ?? ($errors->first('qrcode') ?? null); @endphp
+      @if($scanError)
         <div class="name-box name-box-error">
           <div class="name-box-label">Notice</div>
-          <div class="student-name">{{ session('error') }}</div>
+          <div class="student-name">{{ $scanError }}</div>
         </div>
       @endif
     </aside>
@@ -180,8 +181,14 @@
             e.preventDefault();
             return;
           }
+          // Do not disable the input here — disabled fields are omitted from POST,
+          // so qrcode never reaches the server and the scan looks like a no-op.
+          const value = (input?.value || '').trim();
+          if (!value) {
+            e.preventDefault();
+            return;
+          }
           ready = false;
-          if (input) input.disabled = true;
           setHint('Processing…');
         });
       }

@@ -34,9 +34,9 @@
       <div class="clock-card">
         <div class="date" id="currentDate">Date</div>
         <div class="time" id="currentTime">--:--:--</div>
-        <div class="scan-hint">
+        <div class="scan-hint" id="scanHint">
           <span class="scan-dot"></span>
-          Ready to scan
+          <span id="scanHintText">Ready to scan</span>
         </div>
       </div>
 
@@ -133,15 +133,57 @@
     updateDateTime();
 
     window.onload = function () {
+      const SCAN_COOLDOWN_MS = 3000;
       const input = document.querySelector('.scan-input');
+      const form = document.querySelector('.scan-form');
+      const hintText = document.getElementById('scanHintText');
+      let ready = false;
+
+      function setHint(text) {
+        if (hintText) hintText.textContent = text;
+      }
+
+      function startCooldown() {
+        ready = false;
+        if (input) input.disabled = true;
+
+        let remaining = Math.ceil(SCAN_COOLDOWN_MS / 1000);
+        setHint('Please wait ' + remaining + 's…');
+
+        const tick = setInterval(() => {
+          remaining -= 1;
+          if (remaining > 0) {
+            setHint('Please wait ' + remaining + 's…');
+          } else {
+            clearInterval(tick);
+            ready = true;
+            if (input) {
+              input.disabled = false;
+              input.focus();
+            }
+            setHint('Ready to scan');
+          }
+        }, 1000);
+      }
+
       if (input) {
         input.focus();
-        setInterval(() => input.focus(), 500);
-        input.disabled = true;
-        setTimeout(() => {
-          input.disabled = false;
-          input.focus();
-        }, 1000);
+        setInterval(() => {
+          if (ready && input && !input.disabled) input.focus();
+        }, 500);
+        startCooldown();
+      }
+
+      if (form) {
+        form.addEventListener('submit', function (e) {
+          if (!ready || (input && input.disabled)) {
+            e.preventDefault();
+            return;
+          }
+          ready = false;
+          if (input) input.disabled = true;
+          setHint('Processing…');
+        });
       }
 
       @if(isset($bookStatus) && strtolower($bookStatus) === 'not checked out')

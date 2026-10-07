@@ -25,8 +25,8 @@ class AttendanceLogsExport implements FromCollection, WithHeadings
                 'firstname'   => $log->student?->firstname ?? $log->employee?->firstname ?? 'Unknown',
                 'course'      => $log->student?->course ?? $log->employee?->department ?? 'Unknown',
                 'status'      => strtoupper($log->status),
-                'scanned_at'  => $log->scanned_at 
-                    ? Carbon::parse($log->scanned_at, 'UTC')->timezone('Asia/Manila')->format('Y-m-d h:i A')
+                'scanned_at'  => $log->scanned_at
+                    ? Carbon::parse($log->scanned_at)->format('Y-m-d h:i A')
                     : '—',
             ];
         });

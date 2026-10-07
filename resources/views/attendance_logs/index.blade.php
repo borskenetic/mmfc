@@ -111,7 +111,7 @@
                             </td>
                             <td class="scanned-at">
                                 {{ $log->scanned_at
-                                    ? \Carbon\Carbon::parse($log->scanned_at, 'UTC')->timezone('Asia/Manila')->format('M d, Y · h:i A')
+                                    ? \Carbon\Carbon::parse($log->scanned_at)->format('M d, Y · h:i A')
                                     : '—' }}
                             </td>
                         </tr>
